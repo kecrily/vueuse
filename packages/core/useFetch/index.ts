@@ -97,6 +97,8 @@ const payloadMapping: Record<string, string> = {
   text: 'text/plain',
 }
 
+type RequestOptions = Omit<RequestInit, 'body'> & { body?: BodyInit | null | any }
+
 export interface BeforeFetchContext {
   /**
    * The computed url of the current request
@@ -106,7 +108,7 @@ export interface BeforeFetchContext {
   /**
    * The request options of the current request
    */
-  options: RequestInit
+  options: RequestOptions
 
   /**
    * Cancels the current request
@@ -201,7 +203,7 @@ export interface CreateFetchOptions {
   /**
    * Options for the fetch request
    */
-  fetchOptions?: RequestInit
+  fetchOptions?: RequestOptions
 }
 
 /**
@@ -306,12 +308,12 @@ export function createFetch(config: CreateFetchOptions = {}) {
 
 export function useFetch<T>(url: MaybeComputedRef<string>): UseFetchReturn<T> & PromiseLike<UseFetchReturn<T>>
 export function useFetch<T>(url: MaybeComputedRef<string>, useFetchOptions: UseFetchOptions): UseFetchReturn<T> & PromiseLike<UseFetchReturn<T>>
-export function useFetch<T>(url: MaybeComputedRef<string>, options: RequestInit, useFetchOptions?: UseFetchOptions): UseFetchReturn<T> & PromiseLike<UseFetchReturn<T>>
+export function useFetch<T>(url: MaybeComputedRef<string>, options: RequestOptions, useFetchOptions?: UseFetchOptions): UseFetchReturn<T> & PromiseLike<UseFetchReturn<T>>
 
 export function useFetch<T>(url: MaybeComputedRef<string>, ...args: any[]): UseFetchReturn<T> & PromiseLike<UseFetchReturn<T>> {
   const supportsAbort = typeof AbortController === 'function'
 
-  let fetchOptions: RequestInit = {}
+  let fetchOptions: RequestOptions = {}
   let options: UseFetchOptions = { immediate: true, refetch: false, timeout: 0 }
   interface InternalConfig { method: HttpMethod; type: DataType; payload: unknown; payloadType?: string }
   const config: InternalConfig = {
@@ -385,7 +387,7 @@ export function useFetch<T>(url: MaybeComputedRef<string>, ...args: any[]): UseF
       }
     }
 
-    const defaultFetchOptions: RequestInit = {
+    const defaultFetchOptions: RequestOptions = {
       method: config.method,
       headers: {},
     }
